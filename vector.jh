@@ -1,0 +1,144 @@
+
+entity County {
+	id Long
+	name String required
+    code String required
+    ifmisCode String required
+    collectionAccount String required
+    controlAccount String required
+    logoUrl String
+    flag Flag required
+    createdBy Long
+    updatedBy Long    
+    createdOn Instant  
+    updatedOn Instant  
+    deletedOn Instant 
+}
+
+entity SubCounty {
+	id Long
+	name String required
+    ifmisCode String required
+    flag Flag required
+    countyId Long required
+    createdBy Long
+    updatedBy Long    
+    createdOn Instant  
+    updatedOn Instant  
+    deletedOn Instant 
+}
+
+entity Ward{
+	id Long
+	name String required
+    code String required
+    flag Flag required
+    subCountyId Long required
+    createdBy Long
+    updatedBy Long    
+    createdOn Instant  
+    updatedOn Instant  
+    deletedOn Instant 
+}
+
+entity Zone{
+	id Long
+	name String required
+    code String required
+    flag Flag required
+    wardId Long required
+    createdBy Long
+    updatedBy Long   
+    createdOn Instant 
+    updatedOn Instant
+    deletedOn Instant 
+}
+
+entity User{
+	id Long
+	firstName String required
+    middleName String 
+    surname String required
+    email String required
+    password String required
+    mobileNo String required
+    passport String  
+    termsAndConditions Boolean
+    emailVerified Boolean
+    mobileVerified Boolean
+    mobileToken String
+    emailToken String 
+    photoKey String
+    photoUrl String
+    emailToken String    
+    roleId Role required
+    userGroupId Long required    
+    flag Flag required
+    editData String
+    createdBy Long
+    updatedBy Long    
+    createdOn Instant  
+    updatedOn Instant  
+    deletedOn Instant     
+}
+
+entity UserGroup{
+	id Long 
+	name String required
+    description String required
+    flag Flag required,
+    systemDefined Boolean,
+    roleId Role required,
+    createdBy Long,
+    updatedBy Long,    
+    createdOn Instant,  
+    updatedOn Instant,  
+    deletedOn Instant   
+}
+
+entity Permission{
+	id Long
+    resource Resource required
+    relation Relation required
+}
+
+enum Flag {
+    ACTIVE, INREVIEW, INACTIVE
+}
+
+enum Resource{
+	USER, USERGROUP, COUNTY, SUBCOUNTY, WARD, ZONE
+}
+
+enum Relation{
+	CREATE, EDIT, DELETE
+}
+
+enum Role{
+	SUPERADMIN, COUNTYADMIN, SUBCOUNTYADMIN
+}
+
+// defining multiple OneToMany relationships with comments
+relationship OneToMany {
+    County{id} to SubCounty{countyId}
+    SubCounty{id} to Ward{subCountyId}
+    Ward{id} to Zone{wardId}
+    UserGroup{id} to User{userGroupId}
+}
+
+relationship ManyToMany{
+ 	UserGroup{permission} to Permission{usergroup}
+}
+
+// Set pagination options
+paginate County, Users with infinite-scroll
+paginate SubCounty with pagination
+
+// Use Data Transfer Objects (DTO)
+dto * with mapstruct
+
+// Set service options to all except few
+service all with serviceImpl
+
+// Set an angular suffix
+// angularSuffix * with mySuffix
